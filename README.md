@@ -30,12 +30,12 @@ npm run lint           # run ESLint
 
 ## Features
 
-- **Products** — browse the catalog with search and product cards
-- **Cart** — add/remove items, adjust quantities, running totals
-- **Checkout** — select or add a shipping address, order summary with
+- **Products**  browse the catalog with search and product cards
+- **Cart**  add/remove items, adjust quantities, running totals
+- **Checkout**  select or add a shipping address, order summary with
   shipping (free over $100) and tax, order confirmation
-- **Auth** — mock login/registration (any credentials work in demo mode)
-- **Profile** — edit profile, manage addresses, view and cancel orders
+- **Auth**  mock login/registration (any credentials work in demo mode)
+- **Profile**  edit profile, manage addresses, view and cancel orders
 - Error boundary, toast notifications, protected routes, debounced search
 
 ## Project Structure
@@ -67,8 +67,8 @@ The app ships with mock data. To connect a real API:
 
 The repo includes SPA rewrite configs so client-side routes work on direct navigation:
 
-**Vercel** — import the repo at vercel.com/new; `vercel.json` is picked up automatically.
+**Vercel**  import the repo at vercel.com/new; `vercel.json` is picked up automatically.
 
-**Netlify** — import the repo at app.netlify.com; `netlify.toml` sets the build command, publish directory, and redirects.
+**Netlify**  import the repo at app.netlify.com; `netlify.toml` sets the build command, publish directory, and redirects.
 
-**Anywhere else** — serve the `dist/` folder as static files and rewrite all paths to `/index.html`.
+**Anywhere else**  serve the `dist/` folder as static files and rewrite all paths to `/index.html`.
