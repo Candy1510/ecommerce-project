@@ -2,6 +2,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useForm } from '../../hooks/useForm';
+import type { ChangeEvent, FormEvent } from 'react';
 
 describe('useForm', () => {
   it('initializes with provided values', () => {
@@ -27,7 +28,7 @@ describe('useForm', () => {
     act(() => {
       result.current.handleChange({
         target: { name: 'email', value: 'new@example.com', type: 'text' },
-      } as unknown);
+      } as unknown as ChangeEvent<HTMLInputElement>);
     });
 
     expect(result.current.values.email).toBe('new@example.com');
@@ -44,15 +45,15 @@ describe('useForm', () => {
     act(() => {
       result.current.handleChange({
         target: { name: 'agreeToTerms', checked: true, type: 'checkbox' },
-      } as unknown);
+      } as unknown as ChangeEvent<HTMLInputElement>);
     });
 
     expect(result.current.values.agreeToTerms).toBe(true);
   });
 
   it('validates on blur', () => {
-    const validate = vi.fn((values) => {
-      const errors: unknown = {};
+    const validate = vi.fn((values: { email: string }) => {
+      const errors: Record<string, string> = {};
       if (!values.email) {
         errors.email = 'Required';
       }
@@ -96,7 +97,7 @@ describe('useForm', () => {
     act(() => {
       result.current.handleChange({
         target: { name: 'email', value: 'test@example.com', type: 'text' },
-      } as unknown);
+      } as unknown as ChangeEvent<HTMLInputElement>);
     });
 
     expect(result.current.errors.email).toBeUndefined();
@@ -117,7 +118,7 @@ describe('useForm', () => {
     );
 
     await act(async () => {
-      await result.current.handleSubmit({ preventDefault: vi.fn() } as unknown);
+      await result.current.handleSubmit({ preventDefault: vi.fn() } as unknown as FormEvent);
     });
 
     expect(validate).toHaveBeenCalled();
@@ -138,15 +139,19 @@ describe('useForm', () => {
     );
 
     await act(async () => {
-      await result.current.handleSubmit({ preventDefault: vi.fn() } as unknown);
+      await result.current.handleSubmit({ preventDefault: vi.fn() } as unknown as FormEvent);
     });
 
     expect(onSubmit).toHaveBeenCalledWith({ email: 'test@example.com' });
   });
 
   it('sets isSubmitting during submit', async () => {
+    let resolveSubmit!: () => void;
     const onSubmit = vi.fn(
-      () => new Promise((resolve) => setTimeout(resolve, 100))
+      () =>
+        new Promise<void>((resolve) => {
+          resolveSubmit = resolve;
+        })
     );
 
     const { result } = renderHook(() =>
@@ -158,14 +163,20 @@ describe('useForm', () => {
 
     expect(result.current.isSubmitting).toBe(false);
 
-    const submitPromise = act(async () => {
-      await result.current.handleSubmit({ preventDefault: vi.fn() } as unknown);
+    // Start the submit but don't let onSubmit resolve yet
+    act(() => {
+      void result.current.handleSubmit(
+        { preventDefault: vi.fn() } as unknown as FormEvent
+      );
     });
 
     // During submission
     expect(result.current.isSubmitting).toBe(true);
 
-    await submitPromise;
+    // Let the pending onSubmit resolve
+    await act(async () => {
+      resolveSubmit();
+    });
 
     // After submission
     expect(result.current.isSubmitting).toBe(false);
@@ -183,7 +194,7 @@ describe('useForm', () => {
     expect(result.current.touched).toEqual({});
 
     await act(async () => {
-      await result.current.handleSubmit({ preventDefault: vi.fn() } as unknown);
+      await result.current.handleSubmit({ preventDefault: vi.fn() } as unknown as FormEvent);
     });
 
     expect(result.current.touched).toEqual({
@@ -206,7 +217,7 @@ describe('useForm', () => {
     act(() => {
       result.current.handleChange({
         target: { name: 'email', value: 'changed@example.com', type: 'text' },
-      } as unknown);
+      } as unknown as ChangeEvent<HTMLInputElement>);
     });
 
     // Set errors and touched

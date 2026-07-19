@@ -1,55 +1,74 @@
-# React + TypeScript + Vite
+# E-Commerce App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React + TypeScript e-commerce frontend with product browsing, cart, checkout, authentication, and order history. Currently runs entirely on mock data, so it works out of the box with no backend.
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **React 18** + **TypeScript** + **Vite**
+- **Tailwind CSS** for styling
+- **Zustand** for state management (cart, orders, user, toasts) with localStorage persistence
+- **React Router v6** for routing
+- **TanStack Query** for data fetching
+- **Vitest** + Testing Library + MSW for testing
 
-## Expanding the ESLint configuration
+## Getting Started
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```bash
+npm install
+npm run dev        # start dev server at http://localhost:5173
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Other scripts:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+```bash
+npm run build          # type-check and build for production
+npm run preview        # preview the production build locally
+npm test               # run the test suite
+npm run test:coverage  # run tests with coverage report
+npm run lint           # run ESLint
 ```
-# ecommerce-project
+
+## Features
+
+- **Products** — browse the catalog with search and product cards
+- **Cart** — add/remove items, adjust quantities, running totals
+- **Checkout** — select or add a shipping address, order summary with
+  shipping (free over $100) and tax, order confirmation
+- **Auth** — mock login/registration (any credentials work in demo mode)
+- **Profile** — edit profile, manage addresses, view and cancel orders
+- Error boundary, toast notifications, protected routes, debounced search
+
+## Project Structure
+
+```
+src/
+├── api/          # API modules (currently mock data)
+├── components/   # Reusable UI components
+├── hooks/        # Custom hooks (useForm, useDebounce, useAuth, ...)
+├── lib/          # API client
+├── mocks/        # MSW server for tests
+├── pages/        # Route pages (Home, Products, Cart, Checkout, ...)
+├── stores/       # Zustand stores
+├── types/        # Shared TypeScript types
+├── utils/        # Error handling utilities
+└── __tests__/    # Test suite
+```
+
+## Connecting a Real Backend
+
+The app ships with mock data. To connect a real API:
+
+1. Copy `.env.example` to `.env` and set `VITE_API_URL`
+2. Replace the mock implementations in `src/api/` with calls through
+   `src/lib/api-client.ts` (auth token handling and error parsing are
+   already built in)
+
+## Deployment
+
+The repo includes SPA rewrite configs so client-side routes work on direct navigation:
+
+**Vercel** — import the repo at vercel.com/new; `vercel.json` is picked up automatically.
+
+**Netlify** — import the repo at app.netlify.com; `netlify.toml` sets the build command, publish directory, and redirects.
+
+**Anywhere else** — serve the `dist/` folder as static files and rewrite all paths to `/index.html`.

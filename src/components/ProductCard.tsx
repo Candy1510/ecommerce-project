@@ -4,10 +4,13 @@ import { useCartStore } from "../stores/useCartStore";
 
 interface ProductCardProps {
   product: Product;
+  /** Optional override; defaults to adding the product to the cart store. */
+  onAddToCart?: (product: Product) => void;
 }
 
-const ProductCard = ({ product }: ProductCardProps) => {
+const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
   const addItem = useCartStore((state) => state.addItem);
+  const handleAddToCart = onAddToCart ?? addItem;
 
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
@@ -39,7 +42,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
           </span>
 
           <button
-            onClick={() => addItem(product)}
+            onClick={() => handleAddToCart(product)}
             className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-secondary transition-colors font-medium"
             aria-label={`Add ${product.name} to cart`}
           >

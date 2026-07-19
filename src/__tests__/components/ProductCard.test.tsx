@@ -33,7 +33,9 @@ describe("ProductCard", () => {
     const onAddToCart = vi.fn();
     render(<ProductCard product={mockProduct} onAddToCart={onAddToCart} />);
 
-    const addButton = screen.getByRole("button", { name: /add to cart/i });
+    const addButton = screen.getByRole("button", {
+      name: `Add ${mockProduct.name} to cart`,
+    });
     fireEvent.click(addButton);
 
     expect(onAddToCart).toHaveBeenCalledTimes(1);
@@ -43,7 +45,7 @@ describe("ProductCard", () => {
   it("applies hover styles on mouse enter", () => {
     render(<ProductCard product={mockProduct} />);
 
-    const card = screen.getByText("Test Product").closest("div");
+    const card = document.querySelector(".shadow-md");
     expect(card).toHaveClass("hover:shadow-lg");
   });
 

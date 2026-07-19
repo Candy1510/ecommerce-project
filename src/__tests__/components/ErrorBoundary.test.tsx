@@ -1,5 +1,5 @@
 // src/__tests__/components/ErrorBoundary.test.tsx
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeAll, afterAll } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import ErrorBoundary from "../../components/ErrorBoundary";
 
@@ -83,16 +83,20 @@ describe("ErrorBoundary", () => {
 
     expect(screen.getByText(/Oops! Something went wrong/i)).toBeInTheDocument();
 
-    const tryAgainButton = screen.getByRole("button", { name: /try again/i });
-    fireEvent.click(tryAgainButton);
-
-    // After reset, should try to render children again
+    // Fix the underlying problem first, so the retry can succeed
     rerender(
       <ErrorBoundary>
         <ThrowError shouldThrow={false} />
       </ErrorBoundary>,
     );
 
+    // Boundary still shows the fallback until reset
+    expect(screen.getByText(/Oops! Something went wrong/i)).toBeInTheDocument();
+
+    const tryAgainButton = screen.getByRole("button", { name: /try again/i });
+    fireEvent.click(tryAgainButton);
+
+    // After reset, children render again
     expect(screen.getByText("No error")).toBeInTheDocument();
   });
 
@@ -108,8 +112,8 @@ describe("ErrorBoundary", () => {
     const goHomeButton = screen.getByRole("button", { name: /go home/i });
 
     // Mock window.location.href
-    delete (window as unknown).location;
-    window.location = { href: originalLocation } as unknown;
+    delete (window as { location?: Location }).location;
+    (window as { location: { href: string } }).location = { href: originalLocation };
 
     fireEvent.click(goHomeButton);
 

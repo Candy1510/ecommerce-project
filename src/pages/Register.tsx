@@ -96,7 +96,7 @@ const Register = () => {
 
       setUser(newUser);
       navigate("/profile"); // Redirect to profile after successful registration
-    } catch (err) {
+    } catch {
       setErrors({ submit: "Registration failed. Please try again." });
     } finally {
       setIsLoading(false);

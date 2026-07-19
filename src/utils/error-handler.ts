@@ -84,14 +84,29 @@ export const getStatusErrorMessage = (status: number): string => {
   return ERROR_MESSAGES[status] || 'An error occurred. Please try again.';
 };
 
+// Type guard for error-like objects coming from the API client
+const isErrorLike = (
+  error: unknown
+): error is {
+  message?: string;
+  status?: number;
+  code?: string;
+  details?: Record<string, unknown>;
+} => {
+  return typeof error === 'object' && error !== null;
+};
+
 // Handle API error response
 export const handleApiError = (error: unknown): ApiError => {
-  if (error.status) {
+  if (isErrorLike(error) && error.status) {
     const message = error.message || getStatusErrorMessage(error.status);
     return new ApiError(message, error.status, error.code, error.details);
   }
 
-  if (error.message === 'Network error occurred' || !navigator.onLine) {
+  if (
+    (isErrorLike(error) && error.message === 'Network error occurred') ||
+    !navigator.onLine
+  ) {
     throw new NetworkError();
   }
 

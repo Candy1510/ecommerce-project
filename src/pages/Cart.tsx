@@ -87,9 +87,12 @@ const Cart = () => {
             >
               Clear Cart
             </button>
-            <button className="flex-1 bg-primary text-white px-6 py-3 rounded-lg hover:bg-secondary transition-colors">
+            <Link
+              to="/checkout"
+              className="flex-1 bg-primary text-white px-6 py-3 rounded-lg hover:bg-secondary transition-colors text-center"
+            >
               Checkout
-            </button>
+            </Link>
           </div>
         </div>
       </div>
