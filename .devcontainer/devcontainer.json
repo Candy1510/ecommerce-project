@@ -1,0 +1,16 @@
+{
+  "name": "final-project-ecommerce-app",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:24",
+  "runArgs": ["--sysctl", "net.ipv6.conf.all.disable_ipv6=1"],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint", // For linting support
+        "esbenp.prettier-vscode", // For code formatting
+        "ms-vscode.vscode-typescript-tslint-plugin", // TypeScript linting
+        "firsttris.vscode-jest-runner", // Jest test runner integration
+        "bradlc.vscode-tailwindcss" // Tailwind CSS support
+      ]
+    }
+  }
+}
